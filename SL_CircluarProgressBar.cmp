@@ -1,0 +1,81 @@
+<aura:component controller="SL_CircluarProgressBarController" implements="flexipage:availableForAllPageTypes,force:lightningQuickAction,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName" access="global" >
+
+    <aura:attribute name="Legend" type="String" description="Legend to display" />
+    <aura:attribute name="isDisplayContactForm" type="Boolean" default="false" />
+    <aura:attribute name="perText" type="String" default="0%" description="Text to display inside circle. It is auto calculated field and used internally." />
+    <aura:attribute name="cirDeg" type="String" default="0" description="Degree of Progress to show. It is auto calculated field and used internally." />
+
+    <aura:attribute name="recordId" type="Id" description="Id of record on which this component is hosted." />
+    <aura:attribute name="sObjectName" type="String" description="API name of record on which this component is hosted." />
+
+    <aura:attribute name="totalProgress" type="String" default="100" description="Total progress. It can be number OR API name of field." />
+    <aura:attribute name="actualProgress" type="String" default="25" description="Actual progress. It can be number OR API name of field." />
+
+    <aura:attribute name="theme" type="String" default="green" description="Theme of Circular Progress Bar. Possible values are blue, green, orange." />
+    <aura:attribute name="size" type="String" default="small" description="Size of Circular Progress Bar. Possible values are small, medium, big." />
+    <aura:attribute name="isSafari" type="string" description="Check browser type"/>
+
+    <aura:attribute name="profileCompleteInfo" type="object" />
+    
+    <aura:attribute name="loaded" type="Boolean" default="false" />  
+    <aura:attribute name="userProfileImage" type="string" default="" access="global" />
+   
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   	<aura:handler event="c:SL_evnt_HideContactForm" action="{!c.displayContactForm}"/>
+	
+    <aura:attribute name="fieldApiNamesForFirstStep" type="String" default="" access="global" />
+    <aura:attribute name="fieldApiNamesForSecondStep" type="String" default="" access="global" />
+    <aura:attribute name="fieldApiNamesForThreeStep" type="String" default="" access="global" />
+    <aura:attribute name="fieldApiNamesForFourStep" type="String" default="" access="global" />
+    
+    <style>
+    .imgCls{
+        width:76px;
+        height: 77px;
+        border-radius: 50%;
+        background-image: url("{!v.userProfileImage}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+        margin-top: 12px;
+        margin-left: 11px;
+    }
+    </style>
+     <div class="exampleHolder">
+        <aura:if isTrue="{! v.loaded }">
+            <lightning:spinner alternativeText="Loading" />
+        </aura:if>
+    </div>
+    <div class="clearFloats slds-align--absolute-center" style="{!v.isSafari}">
+        <div class="{! ( v.cirDeg >
+                    179 ) ? 'container p50plus '+v.theme+' '+v.size : 'container '+v.theme +' '+v.size }">
+            <span>
+            	<div class="imgCls"></div>
+            </span>
+            <div class="slice" >
+
+                <div class="bar" style="{! '-webkit-transform: rotate('+v.cirDeg+'deg); -moz-transform: rotate('+v.cirDeg+'deg); -ms-transform: rotate('+v.cirDeg+'deg); -o-transform: rotate('+v.cirDeg+'deg); transform: rotate('+v.cirDeg+'deg); -ms-transform: rotate('+v.cirDeg+'deg);'}"></div>
+
+                <div class="fill"></div>
+            </div>
+        </div>
+        <h2 style=" font-size: 14px; margin-left: -55px; margin-top: 35px; z-index: 1; color: #474F56;"> {!v.perText} </h2>
+    </div>
+
+    <div class="clearFloats slds-align--absolute-center legend">
+        {!v.Legend}
+    </div>
+    <div style=" margin-top: 38px; margin-left: 100px;">
+        <p style="color:#3F3F42;">Complete Your Personal Profile</p>
+        <a href="" style="color:#0DA0CD;"  onclick="{!c.displayContactForm}" > View Profile </a>
+    </div>
+
+    <aura:if isTrue="{!v.isDisplayContactForm}">
+        <c:SL_ContactForm fieldApiNamesForFirstStep="{!v.fieldApiNamesForFirstStep}"
+                          fieldApiNamesForSecondStep="{!v.fieldApiNamesForSecondStep}"
+                          fieldApiNamesForThreeStep="{!v.fieldApiNamesForThreeStep}"
+                          fieldApiNamesForFourStep="{!v.fieldApiNamesForFourStep}"
+                          perText="{!v.perText}"
+                          cirDeg="{!v.cirDeg}"/>
+    </aura:if>
+</aura:component>
